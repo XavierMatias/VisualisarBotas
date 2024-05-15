@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <div class="left">
+                <div class="logo">
+                    <img src="" alt="">
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="../home/home.html">Home</a></li>
+                        <li><a href="../Login/login.html">Login</a></li>
+                        <li><a href="../Cadastro/cadastro.html">Cadastrar-se</a></li>
+                        <li><a href="../sobre/sobre.html">Sobre</a></li>
+                    </ul>
+                </nav>    
+            </div>
+
+
+            <div class="right">
+           
+            </div>    
+
+        </div>
+
+        <div class="linha">
+
+        </div>
+    </header>
+
+    
+    <section>
+        <div class="login">
+            <h2>Cadastro</h2>
+            <form>
+              <div class="input">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" required>
+              </div>
+              <div class="input">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              <div class="input">
+                <label for="nome">E-mail</label>
+                <input type="email" id="email" name="nome" required >
+              </div>
+
+              <button type="submit" id="cadastrar">Cadastrar</button>
+            </form>
+          </div>
+    </section>
+   
+
+    <script>
+      let nome = document.querySelector("#nome")
+      let senha = document.querySelector("#password")
+      let email = document.querySelector("#email")
+      let cadastrar = document.querySelector("#cadastrar")
+
+      //console.log(nome, senha, email, cadastrar)
+      cadastrar.addEventListener("click",(e)=>{
+        e.preventDefault()
+        if(nome.value.length > 0 && senha.value.length > 0 && email.value.length > 0){
+          fetch("http://localhost:3333/cadastrar",{
+            method:"POST",
+            headers:{
+              "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                "nome":nome.value, 
+                "senha":senha.value, 
+                "email":email.value
+            })
+          }).then((response)=>{
+            console.log(response.json())
+          }).then((res)=>{
+            console.log(res)
+          }).catch((err)=>{
+            alert("O servidor nao responde, tente mais tarde")
+          }).finally(()=>{
+            alert("USUARIO CADASTRADO COM SUCESSO!")
+            nome.value = ""  
+            senha.value = ""  
+            email.value = ""
+          })
+
+        }else{
+          alert("PREENCHA TODOS OS CAMPOS")
+        }
+      })
+    </script>
+</body>
+</html>

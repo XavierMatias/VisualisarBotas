@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Usuários</title>
+</head>
+<body>
+    <h1>Lista de Usuários</h1>
+    <!-- Conteúdo do dashboard será adicionado aqui -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('http://localhost:3333/')
+                .then(response => response.json())
+                .then(data => {
+                    // Aqui vamos manipular os dados recebidos
+                    console.log(data); // Vamos exibir os dados no console para verificação
+                })
+                .catch(error => console.error('Erro ao buscar os dados:', error));
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+         fetch('http://localhost:3333/')
+        .then(response => response.json())
+        .then(data => {
+            const usersList = document.createElement('ul');
+            data.forEach(user => {
+                const listItem = document.createElement('li');
+                
+                const userData = document.createElement('div');
+                userData.textContent = `Nome: ${user.nome}, Email: ${user.email}, Senha: ${user.senha}`;
+                listItem.appendChild(userData);
+                
+                // Botão de Editar
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.addEventListener('click', () => {
+                    // Exibe o formulário de edição
+                    const editForm = document.createElement('form');
+                    
+                    const nameLabel = document.createElement('label');
+                    nameLabel.textContent = 'Nome:';
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.value = user.nome;
+                    editForm.appendChild(nameLabel);
+                    editForm.appendChild(nameInput);
+                    
+                    const emailLabel = document.createElement('label');
+                    emailLabel.textContent = 'Email:';
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'email';
+                    emailInput.value = user.email;
+                    editForm.appendChild(emailLabel);
+                    editForm.appendChild(emailInput);
+                    
+                    const passwordLabel = document.createElement('label');
+                    passwordLabel.textContent = 'Senha:';
+                    const passwordInput = document.createElement('input');
+                    passwordInput.type = 'password';
+                    passwordInput.value = user.senha;
+                    editForm.appendChild(passwordLabel);
+                    editForm.appendChild(passwordInput);
+                    
+                    const submitButton = document.createElement('button');
+                    submitButton.type = 'submit';
+                    submitButton.textContent = 'Atualizar';
+                    editForm.appendChild(submitButton);
+                    
+                    editForm.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        
+                        const updatedUser = {
+                            nome: nameInput.value,
+                            email: emailInput.value,
+                            senha: passwordInput.value
+                        };
+                        
+                        fetch(`http://localhost:3333/atualizar/${user.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedUser)
+                        })
+                        .then(response => response.json())
+                        .then(message => {
+                            console.log(message);
+                            // Atualiza a lista de usuários após a atualização
+                            fetchAndUpdateUsersList();
+                        })
+                        .catch(error => console.error('Erro ao atualizar usuário:', error));
+                    });
+                    
+                    listItem.appendChild(editForm);
+                });
+                listItem.appendChild(editButton);
+
+                // Botão de Excluir
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.addEventListener('click', () => {
+                    if (confirm(`Tem certeza que deseja excluir o usuário ${user.nome}?`)) {
+                        fetch(`http://localhost:3333/deletar/${user.id}`, {
+                            method: 'DELETE'
+                        })
+                        .then(response => response.json())
+                        .then(message => {
+                            console.log(message);
+                            // Atualiza a lista de usuários após a exclusão
+                            listItem.remove(); // Remove o usuário excluído da lista na interface
+                        })
+                        .catch(error => console.error('Erro ao excluir usuário:', error));
+                    }
+                });
+                listItem.appendChild(deleteButton);
+
+                usersList.appendChild(listItem);
+            });
+            document.body.appendChild(usersList);
+        })
+        .catch(error => console.error('Erro ao buscar os dados:', error));
+});
+
+    </script>
+    
+</body>
+</html>
