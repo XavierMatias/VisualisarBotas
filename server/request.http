@@ -6,7 +6,7 @@ POST http://localhost:3333/cadastrar
 Content-Type: application/json
 
 {
-    "nome":"ddd", 
+    "nome":"Berrnardo", 
     "senha":"888", 
     "email":"mi@hotmal.com"
 }
@@ -15,12 +15,14 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:3333/atualizar/5
+PUT http://localhost:3333/atualizar/8
 Content-Type: application/json
 
 {
+
     
-    "nome":"Paulo", 
+    
+    "nome":"Paulene", 
     "email":"Paulo@hotmal.com",
     "senha":"7777"
     
@@ -28,4 +30,19 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3333/deletar/2
+DELETE http://localhost:3333/deletar/8
+
+###
+
+POST http://localhost:3333/login
+Content-Type: application/json
+{
+ 
+
+    "senha":"3333", 
+    "email":"Mateus@gmail.com"
+}
+
+###
+
+GET http://localhost:3333/botas

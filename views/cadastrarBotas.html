@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Bota</title>
+</head>
+<body>
+    <form id="bota-form">
+        <input type="hidden" name="id" id="bota-id">
+        <input type="text" name="nome" id="bota-nome" placeholder="Nome da Bota" required>
+        <input type="number" name="id_categoria" id="bota-id_categoria" placeholder="ID da Categoria" required>
+        <input type="number" name="id_cor" id="bota-id_cor" placeholder="ID da Cor" required>
+        <input type="text" name="imagem_url" id="bota-imagem_url" placeholder="URL da Imagem" required>
+        <button type="submit">Cadastrar ou atualizar Bota  </button>
+    </form>
+
+    <div id="botas-list"></div>
+    
+    <script>
+        document.getElementById('bota-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert numeric fields from string to number
+            data.id_categoria = parseInt(data.id_categoria);
+            data.id_cor = parseInt(data.id_cor);
+
+            const method = data.id ? 'PUT' : 'POST';
+            const url = data.id ? `http://localhost:3333/botas/${data.id}` : 'http://localhost:3333/botas';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error: ${response.status} - ${errorText}`);
+                }
+
+                const result = await response.json();
+                alert(data.id ? 'Bota editada com sucesso!' : 'Bota cadastrada com sucesso!');
+                console.log(result);
+                fetchBotas(); // Refresh the list of boots
+                document.getElementById('bota-form').reset();
+                document.getElementById('bota-id').value = '';
+            } catch (error) {
+                console.error('Erro ao cadastrar bota:', error);
+                alert(`Erro ao cadastrar bota: ${error.message}`);
+            }
+        });
+
+        async function fetchBotas() {
+            try {
+                const response = await fetch('http://localhost:3333/botas');
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                const botas = await response.json();
+                const botasList = document.getElementById('botas-list');
+                botasList.innerHTML = '';
+                botas.forEach(bota => {
+                    const botaItem = document.createElement('div');
+                    botaItem.innerHTML = `
+                        <p><strong>Nome:</strong> ${bota.nome}</p>
+                        <p><strong>Categoria:</strong> ${bota.id_categoria}</p>
+                        <p><strong>Cor:</strong> ${bota.id_cor}</p>
+                        <p><strong>Imagem URL:</strong> ${bota.imagem_url}</p>
+                        <button onclick="editBota(${bota.id}, '${bota.nome}', ${bota.id_categoria}, ${bota.id_cor}, '${bota.imagem_url}')">Editar</button>
+                        <button onclick="deleteBota(${bota.id})">Excluir</button>
+                    `;
+                    botasList.appendChild(botaItem);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar botas:', error);
+                alert(`Erro ao buscar botas: ${error.message}`);
+            }
+        }
+
+        async function deleteBota(id) {
+            try {
+                const response = await fetch(`http://localhost:3333/botas/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                alert('Bota excluída com sucesso!');
+                fetchBotas(); // Refresh the list of boots
+            } catch (error) {
+                console.error('Erro ao excluir bota:', error);
+                alert(`Erro ao excluir bota: ${error.message}`);
+            }
+        }
+
+        function editBota(id, nome, id_categoria, id_cor, imagem_url) {
+            document.getElementById('bota-id').value = id;
+            document.getElementById('bota-nome').value = nome;
+            document.getElementById('bota-id_categoria').value = id_categoria;
+            document.getElementById('bota-id_cor').value = id_cor;
+            document.getElementById('bota-imagem_url').value = imagem_url;
+        }
+
+        // Fetch the list of boots when the page loads
+        fetchBotas();
+    </script>
+    
+</body>
+</html>
+

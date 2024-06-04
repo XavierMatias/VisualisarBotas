@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Categorias e Cores</title>
+</head>
+<body>
+    <h1>Lista de Categorias</h1>
+    <ul id="categorias-list"></ul>
+
+    <h2>Adicionar Categoria</h2>
+    <form id="add-categoria-form">
+        <label for="nome-categoria">Nome:</label>
+        <input type="text" id="nome-categoria" placeholder="Nome">
+        <label for="descricao-categoria">Descrição:</label>
+        <input type="text" id="descricao-categoria" placeholder="Descrição">
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <h1>Lista de Cores</h1>
+    <ul id="cores-list"></ul>
+
+    <h2>Adicionar Cor</h2>
+    <form id="add-cor-form">
+        <label for="nome-cor">Nome:</label>
+        <input type="text" id="nome-cor" placeholder="Nome">
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <script>
+        async function fetchCategorias() {
+            try {
+                const response = await fetch('http://localhost:3333/categorias');
+                const categorias = await response.json();
+                const categoriasList = document.getElementById('categorias-list');
+                categoriasList.innerHTML = '';
+                categorias.forEach(categoria => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${categoria.id}, Nome: ${categoria.nome_categoria}, Descrição: ${categoria.descricao}`;
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.onclick = () => editCategoria(categoria.id, categoria.nome_categoria, categoria.descricao);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Excluir';
+                    deleteButton.onclick = () => deleteCategoria(categoria.id);
+
+                    listItem.appendChild(editButton);
+                    listItem.appendChild(deleteButton);
+                    categoriasList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar categorias:', error);
+            }
+        }
+
+        async function fetchCores() {
+            try {
+                const response = await fetch('http://localhost:3333/cores');
+                const cores = await response.json();
+                const coresList = document.getElementById('cores-list');
+                coresList.innerHTML = '';
+                cores.forEach(cor => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${cor.id}, Nome: ${cor.nome_cor}`;
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.onclick = () => editCor(cor.id, cor.nome_cor);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Excluir';
+                    deleteButton.onclick = () => deleteCor(cor.id);
+
+                    listItem.appendChild(editButton);
+                    listItem.appendChild(deleteButton);
+                    coresList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar cores:', error);
+            }
+        }
+
+        async function addCategoria(event) {
+            event.preventDefault();
+            const nome = document.getElementById('nome-categoria').value;
+            const descricao = document.getElementById('descricao-categoria').value;
+            try {
+                const response = await fetch('http://localhost:3333/categorias', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome_categoria: nome, descricao: descricao })
+                });
+                const data = await response.json();
+                console.log(data);
+                fetchCategorias();
+            } catch (error) {
+                console.error('Erro ao adicionar categoria:', error);
+            }
+        }
+
+        async function addCor(event) {
+            event.preventDefault();
+            const nome = document.getElementById('nome-cor').value;
+            try {
+                const response = await fetch('http://localhost:3333/cores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome_cor: nome })
+                });
+                const data = await response.json();
+                console.log(data);
+                fetchCores();
+            } catch (error) {
+                console.error('Erro ao adicionar cor:', error);
+            }
+        }
+
+        async function editCategoria(id, nome, descricao) {
+            const novoNome = prompt('Novo nome:', nome);
+            const novaDescricao = prompt('Nova descrição:', descricao);
+            try {
+                const response = await fetch(`http://localhost:3333/categorias/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome_categoria: novoNome, descricao: novaDescricao })
+                });
+                const data = await response.json();
+                console.log(data);
+                fetchCategorias();
+            } catch (error) {
+                console.error('Erro ao editar categoria:', error);
+            }
+        }
+
+        async function editCor(id, nome) {
+            const novoNome = prompt('Novo nome:', nome);
+            try {
+                const response = await fetch(`http://localhost:3333/cores/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome_cor: novoNome })
+                });
+                const data = await response.json();
+                console.log(data);
+                fetchCores();
+            } catch (error) {
+                console.error('Erro ao editar cor:', error);
+            }
+        }
+
+        async function deleteCategoria(id) {
+            const confirmacao = confirm('Tem certeza que deseja excluir esta categoria?');
+            if (confirmacao) {
+                try {
+                    const response = await fetch(`http://localhost:3333/categorias/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    console.log(data);
+                    fetchCategorias();
+                } catch (error) {
+                    console.error('Erro ao excluir categoria:', error);
+                }
+            }
+        }
+
+        async function deleteCor(id) {
+            const confirmacao = confirm('Tem certeza que deseja excluir esta cor?');
+            if (confirmacao) {
+                try {
+                    const response = await fetch(`http://localhost:3333/cores/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    console.log(data);
+                    fetchCores();
+                } catch (error) {
+                    console.error('Erro ao excluir cor:', error);
+                }
+            }
+        }
+
+        document.getElementById('add-categoria-form').addEventListener('submit', addCategoria);
+        document.getElementById('add-cor-form').addEventListener('submit', addCor);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCategorias();
+            fetchCores();
+        });
+    </script>
+</body>
+</html>

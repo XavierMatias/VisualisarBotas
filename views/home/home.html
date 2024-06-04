@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="home.css">
+    <script>
+        async function fetchBotas() {
+            try {
+                const response = await fetch('http://localhost:3333/botas');
+                const botas = await response.json();
+
+                const container = document.getElementById('botas-container');
+                container.innerHTML = '';
+
+                botas.forEach(bota => {
+                    const botaElement = document.createElement('section');
+                    botaElement.innerHTML = `
+                        <div class="cont">
+                            <div class="left-side">
+                                <div class="item">
+                                    <div class="select-image">
+                                        <img src="${bota.imagem_url}" alt="${bota.nome}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-side">
+                                <div class="conteudo">
+                                    <h1>${bota.nome}</h1>
+                                    <h3>Categoria ID: ${bota.id_categoria} | Cor ID: ${bota.id_cor}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(botaElement);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar botas:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchBotas);
+    </script>
 </head>
 <body>
     <header>
@@ -19,13 +56,8 @@
                         <li><a href="../Login/login.html">Login</a></li>
                         <li><a href="../Cadastro/cadastro.html">Cadastrar-se</a></li>
                         <li><a href="../sobre/sobre.html">Sobre</a></li>
-            
-
                     </ul>
-
-                   
-                    
-                </nav>    
+                </nav>
             </div>
             <div class="right">
                 <form>
@@ -35,98 +67,15 @@
                     <button formaction="../marcas/Lamelo/lamelo.html">Lamelo Ball</button>
                     <button formaction="../marcas/Lebron/lebron.html">Lebron</button>
                 </form>
-
-            </div>    
-
+            </div>
         </div>
-
-        <div class="linha">
-
-        </div>
+        <div class="linha"></div>
     </header>
-
     <main>
-
         <div class="texto">
-
-        <h4>Bem-vindo ao XBotas, o seu 
-            destino definitivo para explorar o 
-            emocionante mundo dos tênis de basquete. 
-            Este é o lugar onde os entusiastas do basquete 
-            encontram a fusão perfeita entre estilo, 
-            desempenho e inovação em calçados esportivos.
-             Desde os ícones clássicos que marcaram época até
-              as mais recentes inovações tecnológicas, estamos
-               aqui para oferecer uma jornada única através
-                do universo dos tênis que definem o jogo.
-            </h4>
-         </div>
-
-         
-        <section>
-            <div class="cont">
-                <div class="left-side">
-                    <div class="item">
-                        <div class="select-image">
-                            <img src="../../img/2 (9).jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="right-side">
-                    <div class="conteudo">
-                        <h1>informação não disponível</h1>
-                        <h3>informação não disponível</h3>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <div class="cont">
-                <div class="left-side">
-                    <div class="item">
-                        <div class="select-image">
-                            <img src="../../img/2 (23).jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="right-side">
-                    <div class="conteudo">
-                        <h1>informação não disponível</h1>
-                        <h3>informação não disponível</h3>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <div class="cont">
-                <div class="left-side">
-                    <div class="item">
-                        <div class="select-image">
-                            <img src="../../img/2 (14).jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="right-side">
-                    <div class="conteudo">
-                        <h1>informação não disponível</h1>
-                        <h3>informação não disponível</h3>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
-
-
+            <h4>Bem-vindo ao XBotas, o seu destino definitivo para explorar o emocionante mundo dos tênis de basquete. Este é o lugar onde os entusiastas do basquete encontram a fusão perfeita entre estilo, desempenho e inovação em calçados esportivos. Desde os ícones clássicos que marcaram época até as mais recentes inovações tecnológicas, estamos aqui para oferecer uma jornada única através do universo dos tênis que definem o jogo.</h4>
+        </div>
+        <div id="botas-container"></div>
     </main>
-
-
-    
 </body>
 </html>
