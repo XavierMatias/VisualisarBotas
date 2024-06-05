@@ -123,14 +123,20 @@ app.post("/categorias", (req, res) => {
 });
 
 app.put("/categorias/:id", (req, res) => {
+    // Desestrutura nome_categoria e descricao do corpo da requisição.
     const { nome_categoria, descricao } = req.body;
+     // Obtém o id da categoria da URL da requisição.
     const categoriaId = req.params.id;
+     // Define uma consulta SQL para atualizar a categoria com base no ID.
     let sql = `UPDATE categoria SET nome_categoria=?, descricao=? WHERE id=?`;
+    // Executa a consulta SQL, substituindo os placeholders pelos valores recebidos.
     db_conn.query(sql, [nome_categoria, descricao, categoriaId], (err, data) => {
         if (err) {
+            // Se ocorrer um erro, loga o erro e envia uma resposta HTTP 500 ao cliente
             console.error("Erro ao atualizar categoria:", err);
             return res.status(500).json("Erro ao atualizar categoria");
         }
+        // Se a atualização for bem-sucedida, envia uma mensagem de sucesso como resposta JSON.
         res.json("Categoria atualizada com sucesso");
     });
 });
